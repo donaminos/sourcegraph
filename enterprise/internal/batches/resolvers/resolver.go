@@ -887,6 +887,8 @@ func (r *Resolver) CreateBatchChangesCredential(ctx context.Context, args *graph
 		return nil, errors.New("empty credential not allowed")
 	}
 
+	svc := service.New(r.store)
+
 	// TODO: Do we want to validate the URL, or even if such an external service exists? Or better, would the DB have a constraint?
 
 	var a auth.Authenticator
@@ -895,7 +897,6 @@ func (r *Resolver) CreateBatchChangesCredential(ctx context.Context, args *graph
 		return nil, err
 	}
 	if kind == extsvc.KindBitbucketServer {
-		svc := service.New(r.store)
 		username, err := svc.FetchUsernameForBitbucketServerToken(ctx, args.ExternalServiceURL, extsvc.KindToType(kind), args.Credential)
 		if err != nil {
 			if bitbucketserver.IsUnauthorized(err) {
@@ -916,6 +917,11 @@ func (r *Resolver) CreateBatchChangesCredential(ctx context.Context, args *graph
 			PublicKey:        keypair.PublicKey,
 			Passphrase:       keypair.Passphrase,
 		}
+	}
+
+	// Validate the newly created authenticator.
+	if err := svc.ValidateAuthenticator(ctx, args.ExternalServiceURL, extsvc.KindToType(kind), a); err != nil {
+		return nil, &ErrVerifyCredentialFailed{SourceErr: err}
 	}
 
 	if args.User != nil {

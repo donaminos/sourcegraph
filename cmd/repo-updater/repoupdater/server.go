@@ -401,8 +401,8 @@ func externalServiceValidate(ctx context.Context, req protocol.ExternalServiceSy
 
 	results := make(chan repos.SourceResult)
 
-	if v, ok := src.(TokenValidator); ok {
-		return v.ValidateToken(ctx)
+	if v, ok := src.(repos.UserSource); ok {
+		return v.ValidateAuthenticator(ctx)
 	} else {
 		go func() {
 			src.ListRepos(ctx, results)
