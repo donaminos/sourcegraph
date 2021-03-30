@@ -920,7 +920,7 @@ func (r *Resolver) CreateBatchChangesCredential(ctx context.Context, args *graph
 	}
 
 	// Validate the newly created authenticator.
-	if err := svc.ValidateAuthenticator(ctx, args.ExternalServiceURL, extsvc.KindToType(kind), a); err != nil {
+	if valid, err := svc.ValidateAuthenticator(ctx, args.ExternalServiceURL, extsvc.KindToType(kind), a); err != nil {
 		return nil, &ErrVerifyCredentialFailed{SourceErr: err}
 	}
 

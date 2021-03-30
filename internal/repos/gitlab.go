@@ -17,6 +17,7 @@ import (
 
 	"github.com/sourcegraph/sourcegraph/cmd/frontend/envvar"
 	"github.com/sourcegraph/sourcegraph/internal/conf/reposource"
+	"github.com/sourcegraph/sourcegraph/internal/errcode"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/auth"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/gitlab"
@@ -150,8 +151,12 @@ func (s GitLabSource) WithAuthenticator(a auth.Authenticator) (Source, error) {
 	return &sc, nil
 }
 
-func (s GitLabSource) ValidateAuthenticator(ctx context.Context) error {
-	return s.client.ValidateToken(ctx)
+func (s GitLabSource) ValidateAuthenticator(ctx context.Context) (bool, error) {
+	err := s.client.ValidateToken(ctx)
+	if err != nil && !errcode.IsUnauthorized(err) {
+		return false, err
+	}
+	return !errcode.IsUnauthorized(err), nil
 }
 
 // ListRepos returns all GitLab repositories accessible to all connections configured

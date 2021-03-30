@@ -564,48 +564,49 @@ type usernameSource interface {
 
 var _ usernameSource = &repos.BitbucketServerSource{}
 
-func (s *Service) ValidateAuthenticator(ctx context.Context, externalServiceID, externalServiceType string, a auth.Authenticator) error {
+func (s *Service) ValidateAuthenticator(ctx context.Context, externalServiceID, externalServiceType string, a auth.Authenticator) (bool, error) {
 	extSvcID, err := s.store.GetExternalServiceID(ctx, store.GetExternalServiceIDOpts{
 		ExternalServiceID:   externalServiceID,
 		ExternalServiceType: externalServiceType,
 	})
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	externalService, err := s.store.ExternalServices().GetByID(ctx, extSvcID)
 	if err != nil {
 		if errcode.IsNotFound(err) {
-			return errors.New("no external service found for repo")
+			return false, errors.New("no external service found for repo")
 		}
-		return err
+		return false, err
 	}
 
 	sources, err := s.sourcer(externalService)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if len(sources) != 1 {
-		return errors.New("got no Source for external service")
+		return false, errors.New("got no Source for external service")
 	}
 
 	userSource, ok := sources[0].(repos.UserSource)
 	if !ok {
-		return errors.New("external service Source cannot use other authenticator")
+		return false, errors.New("external service Source cannot use other authenticator")
 	}
 
 	source, err := userSource.WithAuthenticator(a)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	// Technically this should never happen, but better be safe.
 	if usrc, ok := source.(repos.UserSource); !ok {
-		return errors.New("external service Source cannot use other authenticator")
-	} else if err := usrc.ValidateAuthenticator(ctx); err != nil {
-		return err
+		return false, errors.New("external service Source cannot use other authenticator")
+	} else if valid, err := usrc.ValidateAuthenticator(ctx); err != nil {
+		return false, err
+	} else {
+		return valid, nil
 	}
-	return nil
 }
 
 // ErrChangesetsToDetachNotFound can be returned by (*Service).DetachChangesets
