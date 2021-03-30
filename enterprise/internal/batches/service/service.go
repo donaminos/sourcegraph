@@ -530,6 +530,9 @@ func (s *Service) FetchUsernameForBitbucketServerToken(ctx context.Context, exte
 	if err != nil {
 		return "", err
 	}
+	if len(sources) != 1 {
+		return "", errors.New("got no Source for external service")
+	}
 
 	userSource, ok := sources[0].(repos.UserSource)
 	if !ok {
@@ -547,6 +550,46 @@ func (s *Service) FetchUsernameForBitbucketServerToken(ctx context.Context, exte
 	}
 
 	return usernameSource.AuthenticatedUsername(ctx)
+}
+
+func (s *Service) ValidateToken(ctx context.Context, externalServiceID, externalServiceType, token string) (bool, error) {
+	extSvcID, err := s.store.GetExternalServiceID(ctx, store.GetExternalServiceIDOpts{
+		ExternalServiceID:   externalServiceID,
+		ExternalServiceType: externalServiceType,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	externalService, err := s.store.ExternalServices().GetByID(ctx, extSvcID)
+	if err != nil {
+		if errcode.IsNotFound(err) {
+			return false, errors.New("no external service found for repo")
+		}
+		return false, err
+	}
+
+	sources, err := s.sourcer(externalService)
+	if err != nil {
+		return false, err
+	}
+	if len(sources) != 1 {
+		return false, errors.New("got no Source for external service")
+	}
+
+	userSource, ok := sources[0].(repos.UserSource)
+	if !ok {
+		return false, errors.New("external service source cannot use other authenticator")
+	}
+
+	source, err := userSource.WithAuthenticator(&auth.OAuthBearerToken{Token: token})
+	if err != nil {
+		return false, err
+	}
+	if err := source.(repos.UserSource).ValidateAuthenticator(ctx); err != nil {
+		return false, nil
+	}
+	return true, nil
 }
 
 // A usernameSource can fetch the username associated with the credentials used

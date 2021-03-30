@@ -726,7 +726,3 @@ func isUnauthorized(err error) bool {
 func isTemporarilyUnavailable(err error) bool {
 	return github.IsRateLimitExceeded(err)
 }
-
-type TokenValidator interface {
-	ValidateToken(ctx context.Context) error
-}
