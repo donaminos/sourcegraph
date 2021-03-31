@@ -1,4 +1,4 @@
-import { map } from 'rxjs/operators'
+import { map, mapTo } from 'rxjs/operators'
 import { dataOrThrowErrors, gql } from '../../../../../shared/src/graphql/graphql'
 import { Observable } from 'rxjs'
 import { diffStatFields, fileDiffFields } from '../../../backend/diff'
@@ -26,6 +26,8 @@ import {
     DeleteBatchChangeVariables,
     DetachChangesetsVariables,
     DetachChangesetsResult,
+    CommentOnAllChangesetsOfBatchChangeResult,
+    CommentOnAllChangesetsOfBatchChangeVariables,
 } from '../../../graphql-operations'
 import { requestGraphQL } from '../../../backend/graphql'
 
@@ -533,4 +535,19 @@ export async function detachChangesets(batchChange: Scalars['ID'], changesets: S
         { batchChange, changesets }
     ).toPromise()
     dataOrThrowErrors(result)
+}
+
+export async function commentOnAllChangesetsOfBatchChange(batchChange: Scalars['ID'], comment: string): Promise<void> {
+    return requestGraphQL<CommentOnAllChangesetsOfBatchChangeResult, CommentOnAllChangesetsOfBatchChangeVariables>(
+        gql`
+            mutation CommentOnAllChangesetsOfBatchChange($batchChange: ID!, $comment: String!) {
+                commentOnAllChangesetsOfBatchChange(batchChange: $batchChange, comment: $comment) {
+                    alwaysNil
+                }
+            }
+        `,
+        { batchChange, comment }
+    )
+        .pipe(map(dataOrThrowErrors), mapTo(undefined))
+        .toPromise()
 }

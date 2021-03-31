@@ -432,6 +432,17 @@ func (s *GitLabSource) CreateDraftChangeset(ctx context.Context, c *Changeset) (
 	return exists, nil
 }
 
+// CreateComment posts a comment on the Changeset.
+func (s *GitLabSource) CreateComment(ctx context.Context, c *Changeset, text string) error {
+	project := c.Repo.Metadata.(*gitlab.Project)
+	mr, ok := c.Changeset.Metadata.(*gitlab.MergeRequest)
+	if !ok {
+		return errors.New("Changeset is not a GitLab merge request")
+	}
+
+	return s.client.CreateMergeRequestNote(ctx, project, mr, text)
+}
+
 // CloseChangeset closes the merge request on GitLab, leaving it unlocked.
 func (s *GitLabSource) CloseChangeset(ctx context.Context, c *Changeset) error {
 	project := c.Repo.Metadata.(*gitlab.Project)

@@ -471,3 +471,13 @@ func (s *BitbucketServerSource) listAllLabeledRepos(ctx context.Context, label s
 func (s *BitbucketServerSource) AuthenticatedUsername(ctx context.Context) (string, error) {
 	return s.client.AuthenticatedUsername(ctx)
 }
+
+// CreateComment posts a comment on the Changeset.
+func (s *BitbucketServerSource) CreateComment(ctx context.Context, c *Changeset, text string) error {
+	pr, ok := c.Changeset.Metadata.(*bitbucketserver.PullRequest)
+	if !ok {
+		return errors.New("Changeset is not a Bitbucket Server pull request")
+	}
+
+	return s.client.CreatePullRequestComment(ctx, pr, text)
+}

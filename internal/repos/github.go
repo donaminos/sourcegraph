@@ -277,6 +277,16 @@ func (s GithubSource) createChangeset(ctx context.Context, c *Changeset, prInput
 	return exists, nil
 }
 
+// CreateComment posts a comment on the Changeset.
+func (s GithubSource) CreateComment(ctx context.Context, c *Changeset, text string) error {
+	pr, ok := c.Changeset.Metadata.(*github.PullRequest)
+	if !ok {
+		return errors.New("Changeset is not a GitHub pull request")
+	}
+
+	return s.v4Client.CreatePullRequestComment(ctx, pr, text)
+}
+
 // CloseChangeset closes the given *Changeset on the code host and updates the
 // Metadata column in the *batches.Changeset to the newly closed pull request.
 func (s GithubSource) CloseChangeset(ctx context.Context, c *Changeset) error {
