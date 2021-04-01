@@ -2354,134 +2354,111 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.5.4.tgz#de25b5da9f727985a3757fd59b5d028aba75841a"
   integrity sha512-ZpKr+WTb8zsajqgDkvCEWgp6d5eJT6Q63Ng2neTbzBO76Lbe91vX/iVIW9dikq+Fs3yEo+ls4cxeXABD2LtcbQ==
 
-"@reach/accordion@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/accordion/-/accordion-0.10.2.tgz#1e97bee6227bc48651ecfffce5529d026ab74c97"
-  integrity sha512-fDGzhrM2OZmKVaAF5a0YwuQlKxfUXSgjSKt2SuO3t3kt+o0TU/AJKWa0EOzdS03bsxZtjvFis43cCXGxanVZWQ==
+"@reach/accordion@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/accordion/-/accordion-0.14.0.tgz#2f1bbad5b0bd2f625737c4124189bc1118ca41f0"
+  integrity sha512-RkYglp8He+4Q6oK0/07X47z/jfKihWEcBz5cjd92macNI7oPox8fNICnGM4mVqBRFLe7PiJRSXYQ51NQ6gD84g==
   dependencies:
-    "@reach/auto-id" "^0.10.2"
-    "@reach/descendants" "^0.10.2"
-    "@reach/utils" "^0.10.2"
-    tslib "^1.11.2"
-
-"@reach/auto-id@0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@reach/auto-id/-/auto-id-0.13.0.tgz#0dfa4c1af46d1ad68d8282c786c03362ae35e335"
-  integrity sha512-yU0Mp+xvbq8hmNz8UfvbJEmy6cHnPJ8SwlXg6WuPsJA9sOJdlCyMfkbwqyz1KFVs2ISCR+wVVLT3j/TuuvS60w==
-  dependencies:
-    "@reach/utils" "0.13.0"
-    tslib "^2.0.0"
-
-"@reach/auto-id@^0.10.1", "@reach/auto-id@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/auto-id/-/auto-id-0.10.2.tgz#a447af67241123dcb701ecd61931a2c786ed111e"
-  integrity sha512-PWFZevkHshiJV/z0L/5WQkWhe9QRzdZqC7N/JHRCoYo+odvCz9izXVRsxJf7p4sCuOCvnc8zNzAokFk2E1ZzDg==
-  dependencies:
-    "@reach/utils" "^0.10.2"
-    tslib "^1.11.2"
-
-"@reach/descendants@0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@reach/descendants/-/descendants-0.13.0.tgz#e4034aecfe529a6ef27be464932846636861fe5b"
-  integrity sha512-PYblNDc+oNu9weJqtB91DWS0g6xLeD4dpcxD/mJTI4Zzi4t6qRyepYmkKKs8fmUhm4jJNXSRH8TAFsA7T55OUA==
-  dependencies:
-    "@reach/utils" "0.13.0"
-    tslib "^2.0.0"
-
-"@reach/descendants@^0.10.1", "@reach/descendants@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/descendants/-/descendants-0.10.2.tgz#551c9f767a16bcad6d1abc41449bb46a12cd3ee3"
-  integrity sha512-jb2HlohyHZtNmm/VMDs5F/I3v+gs/7h6i++Uaubu5XiGkSN/3q5ecMh+cFHjsytQSLtp/7Yall/8+mb+KbIq2A==
-  dependencies:
-    "@reach/utils" "^0.10.2"
-    tslib "^1.11.2"
-
-"@reach/dialog@^0.11.2":
-  version "0.11.2"
-  resolved "https://registry.npmjs.org/@reach/dialog/-/dialog-0.11.2.tgz#44d99b4918cb211d4458f7cce3bee01c27c9c8ed"
-  integrity sha512-S3o+FbaiWDgjo6vrHWOGlHSnJRsnmLvh6u8auLu+/g4LBDcxW89zJFITLIvZxMHKHBuBG7q7bd7aSecSoKtcjA==
-  dependencies:
-    "@reach/portal" "0.11.2"
-    "@reach/utils" "0.11.2"
+    "@reach/auto-id" "0.14.0"
+    "@reach/descendants" "0.14.0"
+    "@reach/utils" "0.14.0"
     prop-types "^15.7.2"
-    react-focus-lock "^2.3.1"
-    react-remove-scroll "^2.3.0"
-    tslib "^2.0.0"
+    tslib "^2.1.0"
 
-"@reach/listbox@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@reach/listbox/-/listbox-0.10.1.tgz#3eea4a693a5a62d6e5caf79273ee53edb68d9651"
-  integrity sha512-u+McLIxCIKmOLBYLVtvvaf6alqrJyHRJG/WHNUDk4UKwnU5Qux+/m/WKailKSx+iZZnh39/c3NCtf/nNEfXrKA==
+"@reach/auto-id@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/auto-id/-/auto-id-0.14.0.tgz#1edfdeddb8fad656ec894a934c78f20c3b341416"
+  integrity sha512-Ym8PBXubuXP7m8CFReqHIH8iXOTcZ3PuAjtHHGuc2EToCwhbbFSf1OouWMUdr6S6vZmu0pOnhOgIE1QGw+dEpw==
   dependencies:
-    "@reach/auto-id" "^0.10.1"
-    "@reach/descendants" "^0.10.1"
-    "@reach/machine" "^0.10.1"
-    "@reach/popover" "^0.10.1"
-    "@reach/utils" "^0.10.1"
+    "@reach/utils" "0.14.0"
+    tslib "^2.1.0"
+
+"@reach/descendants@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/descendants/-/descendants-0.14.0.tgz#33f7678e850ba39922817890def4996e61b7d82e"
+  integrity sha512-gbaZZWJzTt2clXGUSS2j5jSJqiPUntVl7QcH+FVP5flAPcddpdShtztNcp2wR5QPKJoRXALs7yQIytwW15siHA==
+  dependencies:
+    "@reach/utils" "0.14.0"
+    tslib "^2.1.0"
+
+"@reach/dialog@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/dialog/-/dialog-0.14.0.tgz#a8099261fa37ee91e0c587c369e8d095cc24a3a8"
+  integrity sha512-Pc9EKxh15vOfeKn2aSZqm7dFJPSgx4kDA1GOANZJ831QCLEBTY8PkWU3KmwbQ/sEU4jOnrd8f8bndv1ixwgCLQ==
+  dependencies:
+    "@reach/portal" "0.14.0"
+    "@reach/utils" "0.14.0"
+    prop-types "^15.7.2"
+    react-focus-lock "^2.5.0"
+    react-remove-scroll "^2.4.1"
+    tslib "^2.1.0"
+
+"@reach/listbox@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/listbox/-/listbox-0.14.0.tgz#35419580ffc69651b51d29081b9c141f3a9b6b90"
+  integrity sha512-MxJJs26r8Ku2bO4UCL+AWLdqFEt+kSTXr/6KQhkLg5uZtr7lTLjZEHmh3EVJ+LEIYwq8XUDw/E0QSJcuEJd5Zw==
+  dependencies:
+    "@reach/auto-id" "0.14.0"
+    "@reach/descendants" "0.14.0"
+    "@reach/machine" "0.14.0"
+    "@reach/popover" "0.14.0"
+    "@reach/utils" "0.14.0"
     prop-types "^15.7.2"
 
-"@reach/machine@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@reach/machine/-/machine-0.10.1.tgz#03d229809aff8b642f0352ed3d8e39a50d88f8ee"
-  integrity sha512-+g+dhmP+kB4BQjRPSseW/bD3vaftwzE7bXr6+KgO3Y+NOUGFsLwTFFNvlQ/0oUNIsw1IfYjRSnYpQWdQnAaaUg==
+"@reach/machine@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/machine/-/machine-0.14.0.tgz#f8ef7f43a8328d849804d41e092d8f7abc49c337"
+  integrity sha512-43vWRK9bLDDntYxagjhDAvOWO/N3O94s0w3JSjj6ky3iyoJydV0NrVe8gCbiDrJGvPRIONIC8OE0nd5mG57h1w==
   dependencies:
-    "@reach/utils" "^0.10.1"
-    "@xstate/fsm" "^1.4.0"
-    tslib "^1.11.1"
+    "@reach/utils" "0.14.0"
+    "@xstate/fsm" "1.4.0"
+    tslib "^2.1.0"
 
-"@reach/menu-button@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/menu-button/-/menu-button-0.10.2.tgz#606a0aeb66421e35f2e52a21f4bb3b478af77431"
-  integrity sha512-OK/cQRPeed3xO3kyh+vZHYmOr5O12vFqgIEwtwxdyMco/p3UiiTOGHjyD+35v4YvUVyOznXDZHYGOA4JWhxAGQ==
+"@reach/menu-button@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/menu-button/-/menu-button-0.14.0.tgz#1ac689071194a443e721474dff5a30edeaaca669"
+  integrity sha512-BWWstAW5IL+qGEPX+KfkKJkvHbJN2kLmKxYqJTsyTeexX+5SLNtBh2r9tQz4x2uRZbQYkQYpoFwZjMLVfTj9hQ==
   dependencies:
-    "@reach/auto-id" "^0.10.2"
-    "@reach/descendants" "^0.10.2"
-    "@reach/popover" "^0.10.2"
-    "@reach/utils" "^0.10.2"
+    "@reach/auto-id" "0.14.0"
+    "@reach/descendants" "0.14.0"
+    "@reach/popover" "0.14.0"
+    "@reach/utils" "0.14.0"
     prop-types "^15.7.2"
-    tslib "^1.11.2"
+    tslib "^2.1.0"
 
-"@reach/observe-rect@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@reach/observe-rect/-/observe-rect-1.1.0.tgz#4e967a93852b6004c3895d9ed8d4e5b41895afde"
-  integrity sha512-kE+jvoj/OyJV24C03VvLt5zclb9ArJi04wWXMMFwQvdZjdHoBlN4g0ZQFjyy/ejPF1Z/dpUD5dhRdBiUmIGZTA==
+"@reach/observe-rect@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
+  integrity sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==
 
-"@reach/popover@^0.10.1", "@reach/popover@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/popover/-/popover-0.10.2.tgz#a0a047e1253f779c27f7839dfed6d2b82ad52328"
-  integrity sha512-NsRZJ1VjBOZLl4tbIAsR4CxYVsrtwYDvw11ZFqm+JszmsIMF2zT/WGnJ/dnbgUXIRg8gHs4YTwd9FvvU6iD8Bw==
+"@reach/popover@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/popover/-/popover-0.14.0.tgz#c3b5db782c744f595669a4d3641392b60b05a0f4"
+  integrity sha512-BvwODRLmmfxLNvsLxINpbCFysgPcCnwBJQdWUixyp9isFaeTc9c8l+KEUgY72Lhxem5G3ryo7qITWg1oMjEL3Q==
   dependencies:
-    "@reach/portal" "^0.10.2"
-    "@reach/rect" "^0.10.2"
-    "@reach/utils" "^0.10.2"
+    "@reach/portal" "0.14.0"
+    "@reach/rect" "0.14.0"
+    "@reach/utils" "0.14.0"
     tabbable "^4.0.0"
-    tslib "^1.11.2"
+    tslib "^2.1.0"
 
-"@reach/portal@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.npmjs.org/@reach/portal/-/portal-0.11.2.tgz#19a671be9ff010a345892b81e710cb6e4d9f9762"
-  integrity sha512-/53A/rY5oX2Y7D5TpvsP+V5cSd+4MPY6f21mAmVn4DCVwpkCFOlJ059ZL7ixS85M0Jz48YQnnvBJUqwkxqUG/g==
+"@reach/portal@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/portal/-/portal-0.14.0.tgz#acb1c3008de1c1b735cccd66d6348b0a0f724316"
+  integrity sha512-b7Ejp83GckaSKP/IIlIpER7dUV3IV/Kz5BTff8rPXA2a2NWKFdpbu5ozKDeAeiXXFLBbRmNk93JPpcvUJAzezw==
   dependencies:
-    "@reach/utils" "0.11.2"
-    tslib "^2.0.0"
+    "@reach/utils" "0.14.0"
+    tslib "^2.1.0"
 
-"@reach/portal@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/portal/-/portal-0.10.2.tgz#a2b4f69eaffad0115320e303d08ea57c8942b398"
-  integrity sha512-ZQU7Xlx9fBv1UurttmaS3dfWRT60Dn9Dtt/wmFyIf5Rquw64jNNL0XD5z0zqgVB+j5qnKERMf1hosYMU3BDSgQ==
+"@reach/rect@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/rect/-/rect-0.14.0.tgz#ac0cb48814c2fbf8cff5a53edf3556c01fe33dc6"
+  integrity sha512-mXunIyFUCbzWlUVwMuI/nL3tLDsPWwe+5knXHQQG5cOqE9tosLt9PqVYQW5iMHdpl9pGqbx7yVXMZKp2hookJg==
   dependencies:
-    "@reach/utils" "^0.10.2"
-    tslib "^1.11.2"
-
-"@reach/rect@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/rect/-/rect-0.10.2.tgz#6f1db6c7561e46c77505840c973d23fd5a57f7d4"
-  integrity sha512-Bk9J40toquXhvvdv4uFe4yIRm2Bkdi5ljYHL7NuBoOcn4xHnk/kjAeqmg8mDwaiZzo2vRekawGU5td2aeO/S0A==
-  dependencies:
-    "@reach/observe-rect" "^1.1.0"
-    "@reach/utils" "^0.10.2"
+    "@reach/observe-rect" "1.2.0"
+    "@reach/utils" "0.14.0"
     prop-types "^15.7.2"
-    tslib "^1.11.2"
+    tslib "^2.1.0"
 
 "@reach/router@^1.3.3":
   version "1.3.4"
@@ -2493,42 +2470,24 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@reach/tabs@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@reach/tabs/-/tabs-0.13.0.tgz#858deebe6dc1c9b112a253d3537dfb1692fabefc"
-  integrity sha512-fRMcUypoKAsEAvkv6UdgVHQgkJtpKRvX6PduOb0yhU18p0JX0Y1hKyCX5mZh8HB+uTH8XI5WLamzsSoaxeEF2g==
+"@reach/tabs@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/tabs/-/tabs-0.14.0.tgz#92ff7206c10ee57d9c21bc8c54fb110dd0cbe02d"
+  integrity sha512-UqMCPvXsEXMXy01DHQRH0Xibgq31hOVSc7gvqLMQBGSutGgEGdX7+0GfVkhZvRCjv8vhXp2FDeRT3L5mO5ebcA==
   dependencies:
-    "@reach/auto-id" "0.13.0"
-    "@reach/descendants" "0.13.0"
-    "@reach/utils" "0.13.0"
+    "@reach/auto-id" "0.14.0"
+    "@reach/descendants" "0.14.0"
+    "@reach/utils" "0.14.0"
     prop-types "^15.7.2"
-    tslib "^2.0.0"
+    tslib "^2.1.0"
 
-"@reach/utils@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.npmjs.org/@reach/utils/-/utils-0.11.2.tgz#be1f03650db56fd67a16d3fc70e5262cdb139cec"
-  integrity sha512-fBTolYj+rKTROXmf0zHO0rCWSvw7J0ALmYj5QxW4DmITMOH5uyRuWDWOfqohIGFbOtF/sum50WTB3tvx76d+Aw==
+"@reach/utils@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@reach/utils/-/utils-0.14.0.tgz#f3ff579c737c3e9528f6f940bc518452f2636810"
+  integrity sha512-QbSFO5p44qUCkOllJM06Lt5A/EsoVIYlB9Ij1vKEezy53keaa5bc879dD2Ahv+mMf+E1VppCeiL6YYvdpJmVVQ==
   dependencies:
     "@types/warning" "^3.0.0"
-    tslib "^2.0.0"
-    warning "^4.0.3"
-
-"@reach/utils@0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@reach/utils/-/utils-0.13.0.tgz#2da775a910d8894bb34e1e94fe95842674f71844"
-  integrity sha512-dypxuyA1Qy3LHxzzyS7jFGPgCCR04b8UEn+Tv/aj6y9V578dULQqkcCyobrdEa+OI8lxH7dFFHa+jH8M/noBrQ==
-  dependencies:
-    "@types/warning" "^3.0.0"
-    tslib "^2.0.0"
-    warning "^4.0.3"
-
-"@reach/utils@^0.10.1", "@reach/utils@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/@reach/utils/-/utils-0.10.2.tgz#b835a7d02bd9fa73a009f7a8286d906745809a2f"
-  integrity sha512-zLYnmE5khVolwYd1wAqa+r6885KDILrZJfVXRa5yUEZ/8ygXhUleiwNpqrAifAD6fG/AUsLa2Azi6n3Nfxf08A==
-  dependencies:
-    "@types/warning" "^3.0.0"
-    tslib "^1.11.2"
+    tslib "^2.1.0"
     warning "^4.0.3"
 
 "@samverschueren/stream-to-observable@^0.3.0":
@@ -4741,7 +4700,7 @@
     "@babel/runtime" "^7.9.2"
     axe-puppeteer "^1.1.0"
 
-"@xstate/fsm@^1.4.0":
+"@xstate/fsm@1.4.0":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@xstate/fsm/-/fsm-1.4.0.tgz#6fd082336fde4d026e9e448576189ee5265fa51a"
   integrity sha512-uTHDeu2xI5E1IFwf37JFQM31RrH7mY7877RqPBS4ZqSNUwoLDuct8AhBWaXGnVizBAYyimVwgCyGa9z/NiRhXA==
@@ -10774,10 +10733,12 @@ fn.name@1.x.x:
   resolved "https://registry.npmjs.org/fn.name/-/fn.name-1.1.0.tgz#26cad8017967aea8731bc42961d04a3d5988accc"
   integrity sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
 
-focus-lock@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.npmjs.org/focus-lock/-/focus-lock-0.7.0.tgz#b2bfb0ca7beacc8710a1ff74275fe0dc60a1d88a"
-  integrity sha512-LI7v2mH02R55SekHYdv9pRHR9RajVNyIJ2N5IEkWbg7FT5ZmJ9Hw4mWxHeEUcd+dJo0QmzztHvDvWcc7prVFsw==
+focus-lock@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.npmjs.org/focus-lock/-/focus-lock-0.8.1.tgz#bb36968abf77a2063fa173cb6c47b12ac8599d33"
+  integrity sha512-/LFZOIo82WDsyyv7h7oc0MJF9ACOvDRdx9rWPZ2pgMfNWu/z8hQDBtOchuB/0BVLmuFOZjV02YwUVzNsWx/EzA==
+  dependencies:
+    tslib "^1.9.3"
 
 focus-visible@^5.2.0:
   version "5.2.0"
@@ -18187,13 +18148,13 @@ react-fast-compare@^3.0.1:
   resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
   integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
 
-react-focus-lock@^2.3.1, react-focus-lock@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.npmjs.org/react-focus-lock/-/react-focus-lock-2.4.1.tgz#e842cc93da736b5c5d331799012544295cbcee4f"
-  integrity sha512-c5ZP56KSpj9EAxzScTqQO7bQQNPltf/W1ZEBDqNDOV1XOIwvAyHX0O7db9ekiAtxyKgnqZjQlLppVg94fUeL9w==
+react-focus-lock@^2.4.1, react-focus-lock@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.npmjs.org/react-focus-lock/-/react-focus-lock-2.5.0.tgz#12e3a3940e897c26e2c2a0408cd25ea3c99b3709"
+  integrity sha512-XLxj6uTXgz0US8TmqNU2jMfnXwZG0mH2r/afQqvPEaX6nyEll5LHVcEXk2XDUQ34RVeLPkO/xK5x6c/qiuSq/A==
   dependencies:
     "@babel/runtime" "^7.0.0"
-    focus-lock "^0.7.0"
+    focus-lock "^0.8.1"
     prop-types "^15.6.2"
     react-clientside-effect "^1.2.2"
     use-callback-ref "^1.2.1"
@@ -18328,10 +18289,10 @@ react-remove-scroll-bar@^2.1.0:
     react-style-singleton "^2.1.0"
     tslib "^1.0.0"
 
-react-remove-scroll@^2.3.0:
-  version "2.4.0"
-  resolved "https://registry.npmjs.org/react-remove-scroll/-/react-remove-scroll-2.4.0.tgz#190c16eb508c5927595935499e8f5dd9ab0e75cf"
-  integrity sha512-BZIO3GaEs0Or1OhA5C//n1ibUP1HdjJmqUVUsOCMxwoIpaCocbB9TFKwHOkBa/nyYy3slirqXeiPYGwdSDiseA==
+react-remove-scroll@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.npmjs.org/react-remove-scroll/-/react-remove-scroll-2.4.1.tgz#e0af6126621083a5064591d367291a81b2d107f5"
+  integrity sha512-K7XZySEzOHMTq7dDwcHsZA6Y7/1uX5RsWhRXVYv8rdh+y9Qz2nMwl9RX/Mwnj/j7JstCGmxyfyC0zbVGXYh3mA==
   dependencies:
     react-remove-scroll-bar "^2.1.0"
     react-style-singleton "^2.1.0"
@@ -20132,8 +20093,7 @@ sourcegraph@^24.0.0:
   integrity sha512-uB2SbjEzcA/HWP3Rj+INUXqQweO8HmRdVWW7zesFWZQFBcu7JTcq0pg0jeAN71glKPIyyOgZVrIm1d7KoVzfZw==
 
 "sourcegraph@link:client/extension-api":
-  version "0.0.0"
-  uid ""
+  version "25.1.0"
 
 space-separated-tokens@^1.0.0:
   version "1.1.2"
@@ -21519,7 +21479,7 @@ tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@^1, tslib@^1.0.0, tslib@^1.10.0, tslib@^1.11.1, tslib@^1.11.2, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
+tslib@^1, tslib@^1.0.0, tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.13.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
