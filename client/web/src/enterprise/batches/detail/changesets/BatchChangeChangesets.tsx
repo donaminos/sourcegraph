@@ -42,7 +42,7 @@ interface Props extends ThemeProps, PlatformContextProps, TelemetryProps, Extens
     useSelect?: {
         isSubmittingSelected: boolean | Error
         setIsSubmittingSelected: (value: boolean | Error) => void
-        onSubmitSelected: (currentSelected: Set<string>) => Promise<void>
+        onSubmitSelected: (currentSelected: Set<string>, done: () => void) => Promise<void>
     }
 
     /** For testing only. */
@@ -87,8 +87,11 @@ export const BatchChangeChangesets: React.FunctionComponent<Props> = ({
         },
         [setSelectedChangesets]
     )
-
-    const deselectAll = useCallback((): void => setSelectedChangesets(new Set()), [setSelectedChangesets])
+    const updateList = useMemo(() => new Subject<void>(), [])
+    const deselectAll = useCallback((): void => {
+        setSelectedChangesets(new Set())
+        updateList.next()
+    }, [setSelectedChangesets, updateList])
     const changesetSelected = useCallback((id: string): boolean => selectedChangesets.has(id), [selectedChangesets])
 
     const [changesetFilters, setChangesetFilters] = useState<ChangesetFilters>({
@@ -178,8 +181,8 @@ export const BatchChangeChangesets: React.FunctionComponent<Props> = ({
         if (!useSelect) {
             throw new Error('Whatever')
         }
-        return useSelect.onSubmitSelected(selectedChangesets)
-    }, [selectedChangesets, useSelect])
+        return useSelect.onSubmitSelected(selectedChangesets, deselectAll)
+    }, [deselectAll, selectedChangesets, useSelect])
 
     return (
         <>
@@ -218,6 +221,7 @@ export const BatchChangeChangesets: React.FunctionComponent<Props> = ({
                     history={history}
                     location={location}
                     useURLQuery={true}
+                    updates={updateList}
                     listComponent="div"
                     listClassName={
                         useSelect
