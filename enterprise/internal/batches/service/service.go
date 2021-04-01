@@ -32,7 +32,13 @@ func New(store *store.Store) *Service {
 // NewWithClock returns a Service the given clock used
 // to generate timestamps.
 func NewWithClock(store *store.Store, clock func() time.Time) *Service {
-	svc := &Service{store: store, sourcer: repos.NewSourcer(httpcli.NewExternalHTTPClientFactory()), clock: clock}
+	return NewWithClockAndSourcer(store, clock, repos.NewSourcer(httpcli.NewExternalHTTPClientFactory()))
+}
+
+// NewWithClock returns a Service the given clock used
+// to generate timestamps.
+func NewWithClockAndSourcer(store *store.Store, clock func() time.Time, sourcer repos.Sourcer) *Service {
+	svc := &Service{store: store, sourcer: sourcer, clock: clock}
 
 	return svc
 }
@@ -633,7 +639,7 @@ func (s *Service) DetachChangesets(ctx context.Context, batchChangeID int64, ids
 	return nil
 }
 
-func (s *Service) CommentOnAllChangesetsOfBatchChange(ctx context.Context, batchChangeID int64, comment string) (err error) {
+func (s *Service) CommentOnAllChangesetsOfBatchChange(ctx context.Context, batchChangeID int64, changesetID int64, comment string) (err error) {
 	traceTitle := fmt.Sprintf("BatchChange: %d", batchChangeID)
 	tr, ctx := trace.New(ctx, "service.CommentOnAllChangesetsOfBatchChange", traceTitle)
 	defer func() {
@@ -652,11 +658,15 @@ func (s *Service) CommentOnAllChangesetsOfBatchChange(ctx context.Context, batch
 	changesets, _, err := s.store.ListChangesets(ctx, store.ListChangesetsOpts{
 		BatchChangeID:    batchChange.ID,
 		PublicationState: &published,
-		EnforceAuthz:     true,
+		// EnforceAuthz:     true,
 		ReconcilerStates: []batches.ReconcilerState{batches.ReconcilerStateCompleted},
+		IDs:              []int64{changesetID},
 	})
 	if err != nil {
 		return err
+	}
+	if len(changesets) != 1 {
+		return errors.New("what is this!!!1111")
 	}
 
 	for _, c := range changesets {

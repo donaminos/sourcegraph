@@ -9,6 +9,8 @@ import {
     queryChangesets as _queryChangesets,
     queryExternalChangesetWithFileDiffs as _queryExternalChangesetWithFileDiffs,
     queryChangesetCountsOverTime as _queryChangesetCountsOverTime,
+    detachChangesets,
+    commentOnAllChangesetsOfBatchChange,
 } from './backend'
 import classNames from 'classnames'
 import SourceBranchIcon from 'mdi-react/SourceBranchIcon'
@@ -18,6 +20,8 @@ import { BatchChangeChangesets } from './changesets/BatchChangeChangesets'
 import FileDocumentIcon from 'mdi-react/FileDocumentIcon'
 import ArchiveIcon from 'mdi-react/ArchiveIcon'
 import { BatchSpecTab } from './BatchSpecTab'
+import { pluralize } from '@sourcegraph/shared/src/util/strings'
+import { asError } from '@sourcegraph/shared/src/util/errors'
 
 type SelectedTab = 'changesets' | 'chart' | 'spec' | 'archived'
 
@@ -113,6 +117,56 @@ export const BatchChangeTabs: React.FunctionComponent<BatchChangeTabsProps> = ({
         },
         [history, location]
     )
+    const [isSubmittingSelected, setIsSubmittingSelected] = useState<boolean | Error>(false)
+    const onSubmitSelectedComment = useCallback(
+        async (selectedChangesets: Set<string>) => {
+            const message = prompt('What would you like to comment')
+            if (!message) {
+                return
+            }
+            if (
+                !confirm(
+                    `Are you sure you want to comment on ${selectedChangesets.size} ${pluralize(
+                        'changeset',
+                        selectedChangesets.size
+                    )}?`
+                )
+            ) {
+                return
+            }
+            setIsSubmittingSelected(true)
+            try {
+                await commentOnAllChangesetsOfBatchChange(batchChange.id, [...selectedChangesets], message)
+                // deselectAll()
+            } catch (error) {
+                setIsSubmittingSelected(asError(error))
+            }
+        },
+        [batchChange.id]
+    )
+    const onSubmitSelectedArchived = useCallback(
+        async (selectedChangesets: Set<string>) => {
+            if (
+                !confirm(
+                    `Are you sure you want to detach ${selectedChangesets.size} ${pluralize(
+                        'changeset',
+                        selectedChangesets.size
+                    )}?`
+                )
+            ) {
+                return
+            }
+            setIsSubmittingSelected(true)
+            try {
+                await detachChangesets(batchChange.id, [...selectedChangesets])
+                // deselectAll()
+                telemetryService.logViewEvent('BatchChangeDetailsPageDetachArchivedChangesets')
+            } catch (error) {
+                setIsSubmittingSelected(asError(error))
+            }
+        },
+        [batchChange.id, telemetryService]
+    )
 
     return (
         <>
@@ -186,6 +240,11 @@ export const BatchChangeTabs: React.FunctionComponent<BatchChangeTabsProps> = ({
                     queryChangesets={queryChangesets}
                     queryExternalChangesetWithFileDiffs={queryExternalChangesetWithFileDiffs}
                     onlyArchived={false}
+                    useSelect={{
+                        isSubmittingSelected,
+                        setIsSubmittingSelected,
+                        onSubmitSelected: onSubmitSelectedComment,
+                    }}
                 />
             )}
             {selectedTab === 'spec' && (
@@ -204,7 +263,11 @@ export const BatchChangeTabs: React.FunctionComponent<BatchChangeTabsProps> = ({
                     queryChangesets={queryChangesets}
                     queryExternalChangesetWithFileDiffs={queryExternalChangesetWithFileDiffs}
                     onlyArchived={true}
-                    enableSelect={true}
+                    useSelect={{
+                        isSubmittingSelected,
+                        setIsSubmittingSelected,
+                        onSubmitSelected: onSubmitSelectedArchived,
+                    }}
                 />
             )}
         </>
