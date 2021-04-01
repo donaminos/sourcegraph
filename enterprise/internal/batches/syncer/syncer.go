@@ -417,8 +417,8 @@ func (s *changesetSyncer) SyncChangeset(ctx context.Context, id int64) error {
 	}
 
 	srcer := sources.NewSourcer(repos.NewSourcer(s.httpFactory), s.syncStore.(*store.Store))
-	// This is a ChangesetSource authenticated with either a site-credential, or the
-	// external service token, based on the heuristic.
+	// This is a ChangesetSource authenticated with the external service
+	// token.
 	source, err := srcer.ForRepo(ctx, repo)
 	if err != nil {
 		return err

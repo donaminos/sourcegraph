@@ -476,7 +476,7 @@ func buildCommitOpts(repo *types.Repo, spec *batches.ChangesetSpec, a auth.Authe
 	return opts, nil
 }
 
-// extractCloneURL returns an arbitrary
+// extractCloneURL returns a remote URL, preferring SSH over HTTPS.
 func extractCloneURL(repo *types.Repo) (string, error) {
 	sources := make([]*types.SourceInfo, len(repo.Sources))
 	for _, source := range repo.Sources {
@@ -495,7 +495,14 @@ func extractCloneURL(repo *types.Repo) (string, error) {
 	if len(sources) == 0 {
 		return "", errors.New("no clone URL found for repo")
 	}
-	return sources[0].CloneURL, nil
+	cloneURL := sources[0].CloneURL
+	parsedU, err := vcs.ParseURL(cloneURL)
+	if err != nil {
+		return "", err
+	}
+	// Remove any existing credentials from the clone URL.
+	parsedU.User = nil
+	return parsedU.String(), nil
 }
 
 // ErrNoSSHCredential is returned by buildPushConfig if the clone URL of the
