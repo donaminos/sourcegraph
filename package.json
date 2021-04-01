@@ -329,7 +329,7 @@
     "rxjs": "^6.6.3",
     "sanitize-html": "^1.26.0",
     "semver": "^7.3.2",
-    "shepherd.js": "^8.0.2",
+    "shepherd.js": "^8.2.3",
     "sourcegraph": "link:client/extension-api",
     "string-score": "^1.0.1",
     "tabbable": "^5.1.5",
