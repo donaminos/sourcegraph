@@ -157,7 +157,12 @@ export const NavLinks: React.FC<Props> = props => {
             {/* show status messages if authenticated user is admin or opted-in with a user tag  */}
             {(authenticatedUser?.siteAdmin || authenticatedUser?.tags?.includes('AllowUserExternalServicePublic')) && (
                 <li className="nav-item">
-                    <StatusMessagesNavItem isSiteAdmin={authenticatedUser.siteAdmin} history={history} />
+                    <StatusMessagesNavItem
+                        isSiteAdmin={authenticatedUser.siteAdmin}
+                        history={history}
+                        userCreatedAt={authenticatedUser.createdAt}
+                        userID={authenticatedUser.id}
+                    />
                 </li>
             )}
             {!minimalNavLinks && (

@@ -1,10 +1,11 @@
 import CloudAlertIcon from 'mdi-react/CloudAlertIcon'
 import CloudCheckIcon from 'mdi-react/CloudCheckIcon'
 import CloudSyncIcon from 'mdi-react/CloudSyncIcon'
+import CloudOffOutlineIcon from 'mdi-react/CloudOffOutlineIcon'
 import React from 'react'
 import { ButtonDropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
-import { Observable, Subscription } from 'rxjs'
-import { catchError, map, repeatWhen, delay, distinctUntilChanged } from 'rxjs/operators'
+import { Observable, Subscription, of } from 'rxjs'
+import { catchError, map, repeatWhen, delay, distinctUntilChanged, switchMap } from 'rxjs/operators'
 import { Link } from '../../../shared/src/components/Link'
 import { dataOrThrowErrors, gql } from '../../../shared/src/graphql/graphql'
 import { asError, ErrorLike, isErrorLike } from '../../../shared/src/util/errors'
@@ -14,6 +15,7 @@ import { ErrorAlert } from '../components/alerts'
 import * as H from 'history'
 import { repeatUntil } from '../../../shared/src/util/rxjs/repeatUntil'
 import { StatusMessagesResult, StatusMessageFields } from '../graphql-operations'
+import { queryExternalServices } from '../components/externalServices/backend'
 import { isEqual } from 'lodash'
 
 export function fetchAllStatusMessages(): Observable<StatusMessagesResult['statusMessages']> {
@@ -105,10 +107,22 @@ interface Props {
     fetchMessages?: () => Observable<StatusMessagesResult['statusMessages']>
     isSiteAdmin: boolean
     history: H.History
+    userCreatedAt: string
+    userID: string
 }
 
+enum UserExternalServiceStatus {
+    NO_CODEHOSTS = 'NO_CODEHOSTS',
+    NO_REPOS = 'NO_REPOS',
+}
+
+type MessageOrError = StatusMessagesResult['statusMessages'] | keyof typeof UserExternalServiceStatus | ErrorLike
+
+const isUserExternalServiceStatus = (status: MessageOrError): status is UserExternalServiceStatus =>
+    status === UserExternalServiceStatus.NO_CODEHOSTS || status === UserExternalServiceStatus.NO_REPOS
+
 interface State {
-    messagesOrError: StatusMessagesResult['statusMessages'] | ErrorLike
+    messagesOrError: MessageOrError
     isOpen: boolean
 }
 
@@ -129,15 +143,32 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
 
     public componentDidMount(): void {
         this.subscriptions.add(
-            (this.props.fetchMessages ?? fetchAllStatusMessages)()
+            queryExternalServices({
+                namespace: this.props.userID,
+                first: null,
+                after: null,
+            })
                 .pipe(
+                    switchMap(({ nodes: services }) => {
+                        if (services.length === 0) {
+                            return of(UserExternalServiceStatus.NO_CODEHOSTS)
+                        }
+
+                        if (!services.some(service => service.repoCount !== 0)) {
+                            return of(UserExternalServiceStatus.NO_REPOS)
+                        }
+
+                        return (this.props.fetchMessages ?? fetchAllStatusMessages)()
+                    }),
                     catchError(error => [asError(error) as ErrorLike]),
                     // Poll on REFRESH_INTERVAL_MS, or REFRESH_INTERVAL_AFTER_ERROR_MS if there is an error.
                     repeatUntil(messagesOrError => isErrorLike(messagesOrError), { delay: REFRESH_INTERVAL_MS }),
                     repeatWhen(completions => completions.pipe(delay(REFRESH_INTERVAL_AFTER_ERROR_MS))),
                     distinctUntilChanged((a, b) => isEqual(a, b))
                 )
-                .subscribe(messagesOrError => this.setState({ messagesOrError }))
+                .subscribe(messagesOrError => {
+                    this.setState({ messagesOrError })
+                })
         )
     }
 
@@ -206,6 +237,11 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
         if (isErrorLike(this.state.messagesOrError)) {
             return <CloudAlertIcon className="icon-inline" />
         }
+
+        if (isUserExternalServiceStatus(this.state.messagesOrError)) {
+            return <CloudOffOutlineIcon className="icon-inline" />
+        }
+
         if (this.state.messagesOrError.some(({ __typename }) => __typename === 'ExternalServiceSyncError')) {
             return (
                 <CloudAlertIcon
@@ -242,7 +278,6 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                 </DropdownToggle>
 
                 <DropdownMenu right={true} className="status-messages-nav-item__dropdown-menu">
-                    <h3>Code host status</h3>
                     <div className="status-messages-nav-item__dropdown-menu-content">
                         {isErrorLike(this.state.messagesOrError) ? (
                             <ErrorAlert
@@ -250,8 +285,10 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                                 prefix="Failed to load status messages"
                                 error={this.state.messagesOrError}
                             />
-                        ) : this.state.messagesOrError.length > 0 ? (
+                        ) : Array.isArray(this.state.messagesOrError) && this.state.messagesOrError.length > 0 ? (
                             this.state.messagesOrError.map((message, index) => this.renderMessage(message, index))
+                        ) : isUserExternalServiceStatus(this.state.messagesOrError) ? (
+                            <h1>aaa</h1>
                         ) : (
                             <StatusMessagesNavItemEntry
                                 title="Repositories up to date"
