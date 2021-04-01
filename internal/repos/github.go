@@ -17,7 +17,6 @@ import (
 
 	"github.com/sourcegraph/sourcegraph/cmd/frontend/envvar"
 	"github.com/sourcegraph/sourcegraph/internal/conf/reposource"
-	"github.com/sourcegraph/sourcegraph/internal/errcode"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/auth"
 	"github.com/sourcegraph/sourcegraph/internal/extsvc/github"
@@ -196,12 +195,9 @@ type githubResult struct {
 	repo *github.Repository
 }
 
-func (s GithubSource) ValidateAuthenticator(ctx context.Context) (bool, error) {
+func (s GithubSource) ValidateAuthenticator(ctx context.Context) error {
 	_, err := s.v3Client.GetAuthenticatedUser(ctx)
-	if err != nil && !errcode.IsUnauthorized(err) {
-		return false, err
-	}
-	return !errcode.IsUnauthorized(err), nil
+	return err
 }
 
 // ListRepos returns all Github repositories accessible to all connections configured

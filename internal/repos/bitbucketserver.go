@@ -471,10 +471,7 @@ func (s *BitbucketServerSource) AuthenticatedUsername(ctx context.Context) (stri
 	return s.client.AuthenticatedUsername(ctx)
 }
 
-func (s *BitbucketServerSource) ValidateAuthenticator(ctx context.Context) (bool, error) {
+func (s *BitbucketServerSource) ValidateAuthenticator(ctx context.Context) error {
 	_, err := s.client.AuthenticatedUsername(ctx)
-	if err != nil && !bitbucketserver.IsUnauthorized(err) {
-		return false, err
-	}
-	return !bitbucketserver.IsUnauthorized(err), nil
+	return err
 }

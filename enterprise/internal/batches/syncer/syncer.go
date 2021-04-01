@@ -2,7 +2,6 @@ package syncer
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"sync"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
+	"github.com/sourcegraph/sourcegraph/enterprise/internal/batches/sources"
 	"github.com/sourcegraph/sourcegraph/enterprise/internal/batches/state"
 	"github.com/sourcegraph/sourcegraph/enterprise/internal/batches/store"
 	"github.com/sourcegraph/sourcegraph/internal/api"
@@ -416,8 +416,20 @@ func (s *changesetSyncer) SyncChangeset(ctx context.Context, id int64) error {
 		return err
 	}
 
-	source, err := loadChangesetSource(ctx, repos.NewSourcer(s.httpFactory), s.syncStore, repo)
+	srcer := sources.NewSourcer(repos.NewSourcer(s.httpFactory), s.syncStore.(*store.Store))
+	// This is a ChangesetSource authenticated with either a site-credential, or the
+	// external service token, based on the heuristic.
+	source, err := srcer.ForRepo(ctx, repo)
 	if err != nil {
+		return err
+	}
+	// Try to use a site credential. If none is present, fall back to
+	// the external service config. This code path should error in the
+	// future.
+	source, err = srcer.WithSiteAuthenticator(ctx, source, repo)
+	if err != nil {
+		// TODO: If this fails because no credential exists, the changeset syncer will be clogged
+		// and retry constantly, I guess.
 		return err
 	}
 
@@ -463,54 +475,4 @@ func SyncChangeset(ctx context.Context, syncStore SyncStore, source repos.Change
 	}
 
 	return tx.UpsertChangesetEvents(ctx, events...)
-}
-
-// loadChangesetSource get an authenticated ChangesetSource for the given repo
-// to load the changeset state from.
-func loadChangesetSource(ctx context.Context, sourcer repos.Sourcer, s SyncStore, r *types.Repo) (repos.ChangesetSource, error) {
-	// First, we need to find an arbitrary external service associated with the repo.
-	// The logic in loadExternalService is a bit more complicated than it needs to be,
-	// because we want to maintain compatibility with the previous behavior of always
-	// syncing with an external service config, when no site-credential is configured.
-	// In 3.28, this is set to disappear, as we will completely disable using external
-	// service tokens for Batch Changes.
-	externalService, err := loadExternalService(ctx, s, r)
-	if err != nil {
-		return nil, err
-	}
-
-	// Then, use the external service to build a ChangesetSource.
-	sources, err := sourcer(externalService)
-	if err != nil {
-		return nil, err
-	}
-	if len(sources) != 1 {
-		return nil, fmt.Errorf("got no Source for external service of kind %q", externalService.Kind)
-	}
-	source := sources[0]
-
-	// Try to find a site-credential. If one is configured, use that for syncing the changeset.
-	siteCredential, err := s.GetSiteCredential(ctx, store.GetSiteCredentialOpts{
-		ExternalServiceType: r.ExternalRepo.ServiceType,
-		ExternalServiceID:   r.ExternalRepo.ServiceID,
-	})
-	if err != nil && err != store.ErrNoResults {
-		return nil, err
-	}
-	if siteCredential != nil {
-		userSource, ok := source.(repos.UserSource)
-		if !ok {
-			return nil, fmt.Errorf("cannot create UserSource from external service of kind %q", externalService.Kind)
-		}
-		source, err = userSource.WithAuthenticator(siteCredential.Credential)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	ccs, ok := source.(repos.ChangesetSource)
-	if !ok {
-		return nil, fmt.Errorf("cannot create ChangesetSource from external service of kind %q", externalService.Kind)
-	}
-	return ccs, nil
 }

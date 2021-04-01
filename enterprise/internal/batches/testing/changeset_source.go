@@ -233,6 +233,10 @@ func (s *FakeChangesetSource) WithAuthenticator(a auth.Authenticator) (repos.Sou
 	return s, nil
 }
 
+func (s *FakeChangesetSource) ValidateAuthenticator(context.Context) error {
+	return nil
+}
+
 func (s *FakeChangesetSource) AuthenticatedUsername(ctx context.Context) (string, error) {
 	s.AuthenticatedUsernameCalled = true
 	return s.Username, nil
