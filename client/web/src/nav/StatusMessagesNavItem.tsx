@@ -28,7 +28,7 @@ export function fetchAllStatusMessages(): Observable<StatusMessagesResult['statu
             }
 
             fragment StatusMessageFields on StatusMessage {
-                __typename
+                type: __typename
 
                 ... on CloningProgress {
                     message
@@ -111,15 +111,17 @@ interface Props {
     userID: string
 }
 
-enum UserExternalServiceStatus {
+enum ExternalServiceNoActivityReasons {
     NO_CODEHOSTS = 'NO_CODEHOSTS',
     NO_REPOS = 'NO_REPOS',
 }
 
-type MessageOrError = StatusMessagesResult['statusMessages'] | keyof typeof UserExternalServiceStatus | ErrorLike
+type ExternalServiceNoActivityReason = keyof typeof ExternalServiceNoActivityReasons
 
-const isUserExternalServiceStatus = (status: MessageOrError): status is UserExternalServiceStatus =>
-    status === UserExternalServiceStatus.NO_CODEHOSTS || status === UserExternalServiceStatus.NO_REPOS
+type MessageOrError = StatusMessagesResult['statusMessages'] | ExternalServiceNoActivityReason | ErrorLike
+
+const isNoActivityReason = (status: MessageOrError): status is ExternalServiceNoActivityReason =>
+    typeof status === 'string'
 
 interface State {
     messagesOrError: MessageOrError
@@ -151,11 +153,11 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                 .pipe(
                     switchMap(({ nodes: services }) => {
                         if (services.length === 0) {
-                            return of(UserExternalServiceStatus.NO_CODEHOSTS)
+                            return of(ExternalServiceNoActivityReasons.NO_CODEHOSTS)
                         }
 
                         if (!services.some(service => service.repoCount !== 0)) {
-                            return of(UserExternalServiceStatus.NO_REPOS)
+                            return of(ExternalServiceNoActivityReasons.NO_REPOS)
                         }
 
                         return (this.props.fetchMessages ?? fetchAllStatusMessages)()
@@ -176,12 +178,41 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
         this.subscriptions.unsubscribe()
     }
 
-    private renderMessage(message: StatusMessageFields, key: number): JSX.Element | null {
-        switch (message.__typename) {
+    private renderMessage(message: StatusMessageFields | ExternalServiceNoActivityReason): JSX.Element | null {
+        if (isNoActivityReason(message)) {
+            if (message === ExternalServiceNoActivityReasons.NO_REPOS) {
+                return (
+                    <StatusMessagesNavItemEntry
+                        key={message}
+                        title="Repositories cloning"
+                        text="asdasdasd"
+                        showLink={this.props.isSiteAdmin}
+                        linkTo="/site-admin/external-services"
+                        linkText="Configure synced repositories"
+                        linkOnClick={this.toggleIsOpen}
+                        entryType="progress"
+                    />
+                )
+            }
+            return (
+                <StatusMessagesNavItemEntry
+                    key={message}
+                    title="Repositories cloning"
+                    text="asdasdasd"
+                    showLink={this.props.isSiteAdmin}
+                    linkTo="/site-admin/external-services"
+                    linkText="Configure synced repositories"
+                    linkOnClick={this.toggleIsOpen}
+                    entryType="progress"
+                />
+            )
+        }
+
+        switch (message.type) {
             case 'CloningProgress':
                 return (
                     <StatusMessagesNavItemEntry
-                        key={key}
+                        key={message.message}
                         title="Repositories cloning"
                         text={message.message}
                         showLink={this.props.isSiteAdmin}
@@ -194,7 +225,7 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
             case 'IndexingProgress':
                 return (
                     <StatusMessagesNavItemEntry
-                        key={key}
+                        key={message.message}
                         title="Repositories indexing"
                         text={message.message}
                         showLink={this.props.isSiteAdmin}
@@ -207,7 +238,7 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
             case 'ExternalServiceSyncError':
                 return (
                     <StatusMessagesNavItemEntry
-                        key={key}
+                        key={message.message}
                         title={`Syncing repositories from external service "${message.externalService.displayName}" failed:`}
                         text={message.message}
                         showLink={this.props.isSiteAdmin}
@@ -220,7 +251,7 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
             case 'SyncError':
                 return (
                     <StatusMessagesNavItemEntry
-                        key={key}
+                        key={message.message}
                         title="Syncing repositories failed:"
                         text={message.message}
                         showLink={this.props.isSiteAdmin}
@@ -238,11 +269,11 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
             return <CloudAlertIcon className="icon-inline" />
         }
 
-        if (isUserExternalServiceStatus(this.state.messagesOrError)) {
+        if (isNoActivityReason(this.state.messagesOrError)) {
             return <CloudOffOutlineIcon className="icon-inline" />
         }
 
-        if (this.state.messagesOrError.some(({ __typename }) => __typename === 'ExternalServiceSyncError')) {
+        if (this.state.messagesOrError.some(({ type }) => type === 'ExternalServiceSyncError')) {
             return (
                 <CloudAlertIcon
                     className="icon-inline"
@@ -250,7 +281,7 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                 />
             )
         }
-        if (this.state.messagesOrError.some(({ __typename }) => __typename === 'CloningProgress')) {
+        if (this.state.messagesOrError.some(({ type }) => type === 'CloningProgress')) {
             return (
                 <CloudSyncIcon
                     className="icon-inline"
@@ -286,9 +317,9 @@ export class StatusMessagesNavItem extends React.PureComponent<Props, State> {
                                 error={this.state.messagesOrError}
                             />
                         ) : Array.isArray(this.state.messagesOrError) && this.state.messagesOrError.length > 0 ? (
-                            this.state.messagesOrError.map((message, index) => this.renderMessage(message, index))
-                        ) : isUserExternalServiceStatus(this.state.messagesOrError) ? (
-                            <h1>aaa</h1>
+                            this.state.messagesOrError.map(message => this.renderMessage(message))
+                        ) : isNoActivityReason(this.state.messagesOrError) ? (
+                            this.renderMessage(this.state.messagesOrError)
                         ) : (
                             <StatusMessagesNavItemEntry
                                 title="Repositories up to date"
