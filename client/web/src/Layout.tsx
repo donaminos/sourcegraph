@@ -71,7 +71,7 @@ import { CodeMonitoringProps } from './code-monitoring'
 import { UserRepositoriesUpdateProps } from './util'
 import { FilterKind, findFilter } from '../../shared/src/search/query/validate'
 import { FilterType } from '../../shared/src/search/query/filters'
-import { omitContextFilter } from '../../shared/src/search/query/transformer'
+import { omitFilter } from '../../shared/src/search/query/transformer'
 
 export interface LayoutProps
     extends RouteComponentProps<{}>,
@@ -185,7 +185,7 @@ export const Layout: React.FunctionComponent<LayoutProps> = props => {
         ) {
             // If a global search context spec is available to the user, we omit it from the
             // query and move it to the search contexts dropdown
-            finalQuery = omitContextFilter(finalQuery, globalContextFilter)
+            finalQuery = omitFilter(finalQuery, globalContextFilter)
         }
 
         if (finalQuery !== currentQuery) {

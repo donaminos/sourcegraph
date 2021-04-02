@@ -1,7 +1,12 @@
 import { FilterType } from './filters'
 import { Filter } from './token'
-import { appendContextFilter, omitContextFilter } from './transformer'
+import { appendContextFilter, omitFilter, updateFilters } from './transformer'
 import { FilterKind, findFilter } from './validate'
+
+expect.addSnapshotSerializer({
+    serialize: value => value as string,
+    test: () => true,
+})
 
 describe('appendContextFilter', () => {
     test('appending context to empty query', () => {
@@ -34,16 +39,35 @@ describe('omitContextFilter', () => {
 
     test('omit context filter from the start of the query', () => {
         const query = 'context:foo bar'
-        expect(omitContextFilter(query, getGlobalContextFilter(query))).toEqual('bar')
+        expect(omitFilter(query, getGlobalContextFilter(query))).toEqual('bar')
     })
 
     test('omit context filter from the end of the query', () => {
         const query = 'bar context:foo'
-        expect(omitContextFilter(query, getGlobalContextFilter(query))).toEqual('bar ')
+        expect(omitFilter(query, getGlobalContextFilter(query))).toEqual('bar ')
     })
 
     test('omit context filter from the middle of the query', () => {
         const query = 'bar context:foo bar1'
-        expect(omitContextFilter(query, getGlobalContextFilter(query))).toEqual('bar  bar1')
+        expect(omitFilter(query, getGlobalContextFilter(query))).toEqual('bar  bar1')
+    })
+})
+
+describe('updateFilters', () => {
+    test('append count', () => {
+        const query = '(a or b) (-repo:foo and -file:bar) content:"count:5000"'
+        expect(updateFilters(query, 'count', '5000')).toMatchInlineSnapshot(
+            '(a or b) (-repo:foo and -file:bar) content:"count:5000" count:5000'
+        )
+    })
+
+    test('update count', () => {
+        const query = 'foo bar count:5'
+        expect(updateFilters(query, 'count', '5000')).toMatchInlineSnapshot('foo bar count:5000')
+    })
+
+    test('update counts', () => {
+        const query = '(foo count:5) or (bar count:10)'
+        expect(updateFilters(query, 'count', '5000')).toMatchInlineSnapshot('(foo count:5000) or (bar count:5000)')
     })
 })
