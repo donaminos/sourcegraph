@@ -357,7 +357,7 @@ func (r *searchResolver) Suggestions(ctx context.Context, args *searchSuggestion
 		if err != nil {
 			return nil, err
 		}
-		p := search.ToTextSearch(q, search.Pagination, query.PatternToFile)
+		p := search.ToTextSearch(q, search.Streaming, query.Identity)
 
 		ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 		defer cancel()

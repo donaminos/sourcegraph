@@ -1,6 +1,7 @@
 package search
 
 import (
+	"encoding/json"
 	"math"
 	"regexp"
 	"strconv"
@@ -9,9 +10,14 @@ import (
 	"github.com/go-enry/go-enry/v2"
 	"github.com/sourcegraph/sourcegraph/internal/search/filter"
 	"github.com/sourcegraph/sourcegraph/internal/search/query"
+
+	"github.com/inconshreveable/log15"
 )
 
 func unionRegexp(values []string) string {
+	if len(values) == 0 {
+		return "" // Empty string implies nothing for exclude patterns, as opposed to () which means "match empty regex".
+	}
 	return "(" + strings.Join(values, ")|(") + ")"
 }
 
@@ -73,13 +79,26 @@ func ToTextSearch(q query.Basic, p Protocol, transform query.BasicPass) *TextPat
 	filesInclude, filesExclude := q.IncludeExcludeValues(query.FieldFile)
 	// Handle lang: and -lang: filters.
 	langInclude, langExclude := q.IncludeExcludeValues(query.FieldLang)
-	filesInclude = appendMap(langInclude, langToFileRegexp)
-	filesExclude = appendMap(langExclude, langToFileRegexp)
+	filesInclude = append(filesInclude, appendMap(langInclude, langToFileRegexp)...)
+	filesExclude = append(filesExclude, appendMap(langExclude, langToFileRegexp)...)
 	filesReposMustInclude, filesReposMustExclude := q.IncludeExcludeValues(query.FieldRepoHasFile)
 	selector, _ := filter.SelectPathFromString(q.FindValue(query.FieldSelect)) // Invariant: already validated.
 
+	vv, _ := json.Marshal(filesInclude)
+	log15.Info("x", "1", string(vv))
+
 	isStructural := q.IsStructural()
 	count := count(q, p, isStructural)
+
+	var pattern string
+	if p, ok := q.Pattern.(query.Pattern); ok {
+		pattern = p.Value
+	}
+
+	negated := false
+	if p, ok := q.Pattern.(query.Pattern); ok {
+		negated = p.Negated
+	}
 
 	return &TextPatternInfo{
 		// Atomic Assumptions
@@ -87,8 +106,8 @@ func ToTextSearch(q query.Basic, p Protocol, transform query.BasicPass) *TextPat
 		IsStructuralPat: isStructural,
 		IsCaseSensitive: q.IsCaseSensitive(),
 		FileMatchLimit:  int32(count),
-		Pattern:         q.Pattern.(query.Pattern).Value,
-		IsNegated:       q.Pattern.(query.Pattern).Negated,
+		Pattern:         pattern,
+		IsNegated:       negated,
 
 		// Parameters
 		IncludePatterns:              filesInclude,

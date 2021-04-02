@@ -154,18 +154,27 @@ func (b Basic) IsCaseSensitive() bool {
 
 // Warning: Atomic query assumption. Assumes query is regexp the first time it encounteres an annotation that is regexp.
 func (b Basic) IsRegexp() bool {
+	if b.Pattern == nil {
+		return false
+	}
 	annot := b.Pattern.(Pattern).Annotation
 	return annot.Labels.IsSet(Regexp)
 }
 
 // Warning: Atomic query assumption. Assumes query is regexp the first time it encounteres an annotation that is regexp.
 func (b Basic) IsLiteral() bool {
+	if b.Pattern == nil {
+		return false
+	}
 	annot := b.Pattern.(Pattern).Annotation
 	return annot.Labels.IsSet(Literal)
 }
 
 // Warning: Atomic query assumption. Assumes query has one pattern with structural annotation.
 func (b Basic) IsStructural() bool {
+	if b.Pattern == nil {
+		return false
+	}
 	annot := b.Pattern.(Pattern).Annotation
 	return annot.Labels.IsSet(Structural)
 }
@@ -220,7 +229,13 @@ func (b Basic) MapCount(count int) Basic {
 }
 
 func (b Basic) Index() YesNoOnly {
-	return *Q(ToNodes(b.Parameters)).yesNoOnlyValue(FieldIndex)
+	params := b.Parameters
+	nodes := ToNodes(params)
+	v := Q(nodes).yesNoOnlyValue(FieldIndex)
+	if v == nil {
+		return Yes
+	}
+	return *v
 }
 
 func (b Basic) String() string {

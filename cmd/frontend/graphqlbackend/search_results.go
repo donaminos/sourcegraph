@@ -1598,7 +1598,14 @@ func (r *searchResolver) doResults(ctx context.Context, forceResultTypes result.
 	if err != nil {
 		return nil, err
 	}
-	p := search.ToTextSearch(q, search.Pagination, query.PatternToFile)
+	mode := search.Streaming
+	if r.stream == nil {
+		mode = search.Batch
+	}
+	log15.Info("0", "care", "here")
+	p := search.ToTextSearch(q, mode, query.Identity)
+	vv, _ := json.Marshal(p)
+	log15.Info("1", "p", string(vv))
 
 	if r.PatternType == query.SearchTypeStructural && p.Pattern == "" {
 		r.PatternType = query.SearchTypeLiteral
