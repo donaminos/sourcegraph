@@ -158,6 +158,12 @@ func (b Basic) IsRegexp() bool {
 	return annot.Labels.IsSet(Regexp)
 }
 
+// Warning: Atomic query assumption. Assumes query is regexp the first time it encounteres an annotation that is regexp.
+func (b Basic) IsLiteral() bool {
+	annot := b.Pattern.(Pattern).Annotation
+	return annot.Labels.IsSet(Literal)
+}
+
 // Warning: Atomic query assumption. Assumes query has one pattern with structural annotation.
 func (b Basic) IsStructural() bool {
 	annot := b.Pattern.(Pattern).Annotation

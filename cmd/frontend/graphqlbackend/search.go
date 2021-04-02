@@ -25,8 +25,6 @@ import (
 	"github.com/sourcegraph/sourcegraph/internal/trace"
 	"github.com/sourcegraph/sourcegraph/internal/vcs"
 	"github.com/sourcegraph/sourcegraph/schema"
-
-	"github.com/inconshreveable/log15"
 )
 
 // This file contains the root resolver for search. It currently has a lot of
@@ -440,46 +438,39 @@ func (r *searchResolver) resolveRepositories(ctx context.Context, effectiveRepoF
 func (r *searchResolver) suggestFilePaths(ctx context.Context, limit int) ([]SearchSuggestionResolver, error) {
 	resolved, err := r.resolveRepositories(ctx, nil)
 	if err != nil {
-		log15.Info("1. nope")
 		return nil, err
 	}
 
 	if resolved.OverLimit {
-		log15.Info("2. nope")
 		// If we've exceeded the repo limit, then we may miss files from repos we care
 		// about, so don't bother searching filenames at all.
 		return nil, nil
 	}
 
-	p, err := r.getPatternInfo(&getPatternInfoOptions{forceFileSearch: true})
+	q, err := query.ToBasicQuery(r.Query)
 	if err != nil {
-		log15.Info("3. nope")
 		return nil, err
 	}
-
-	log15.Info("Got probably horribly wrong pattern info", "Q", r.Query.String())
+	p := search.ToTextSearch(q, search.Batch, query.PatternToFile)
 	args := search.TextParameters{
 		PatternInfo:     p,
 		RepoPromise:     (&search.Promise{}).Resolve(resolved.RepoRevs),
-		Query:           r.Query,
+		Query:           r.Query, // what to do about this, could have been mutated ??
 		UseFullDeadline: r.searchTimeoutFieldSet(),
 		Zoekt:           r.zoekt,
 		SearcherURLs:    r.searcherURLs,
 	}
 	if err := args.PatternInfo.Validate(); err != nil {
-		log15.Info("4. nope")
 		return nil, err
 	}
 
 	fileResults, _, err := searchFilesInReposBatch(ctx, r.db, &args)
 	if err != nil {
-		log15.Info("5. nope")
 		return nil, err
 	}
 
 	var suggestions []SearchSuggestionResolver
 	for i, result := range fileResults {
-		log15.Info("6. yep", "x", result.File().Path())
 		assumedScore := len(fileResults) - i // Greater score is first, so we inverse the index.
 		suggestions = append(suggestions, gitTreeSuggestionResolver{
 			gitTreeEntry: result.File(),

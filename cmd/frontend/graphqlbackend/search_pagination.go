@@ -21,6 +21,8 @@ import (
 	"github.com/sourcegraph/sourcegraph/internal/search/streaming"
 	"github.com/sourcegraph/sourcegraph/internal/trace"
 	"github.com/sourcegraph/sourcegraph/internal/types"
+
+	"github.com/sourcegraph/sourcegraph/internal/search/query"
 )
 
 // searchCursor represents a decoded search pagination cursor. From an API
@@ -144,10 +146,11 @@ func (r *searchResolver) paginatedResults(ctx context.Context) (result *SearchRe
 		return alertResult, nil
 	}
 
-	p, err := r.getPatternInfo(nil)
+	q, err := query.ToBasicQuery(r.Query)
 	if err != nil {
 		return nil, err
 	}
+	p := search.ToTextSearch(q, search.Pagination, query.PatternToFile)
 	args := search.TextParameters{
 		PatternInfo:     p,
 		RepoPromise:     (&search.Promise{}).Resolve(resolved.RepoRevs),

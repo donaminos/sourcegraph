@@ -753,10 +753,10 @@ func identity(nodes []Node) ([]Node, error) {
 }
 
 // Converts a parse tree to a basic query by attempting to obtain a valid partition.
-func ToBasicQuery(nodes []Node) (*Basic, error) {
+func ToBasicQuery(nodes []Node) (Basic, error) {
 	parameters, pattern, err := PartitionSearchPattern(nodes)
 	if err != nil {
-		return nil, err
+		return Basic{}, err
 	}
-	return &Basic{Parameters: parameters, Pattern: pattern}, nil
+	return Basic{Parameters: parameters, Pattern: pattern}, nil
 }

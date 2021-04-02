@@ -353,10 +353,11 @@ func (r *searchResolver) Suggestions(ctx context.Context, args *searchSuggestion
 			return nil, err
 		}
 
-		p, err := r.getPatternInfo(nil)
+		q, err := query.ToBasicQuery(r.Query)
 		if err != nil {
 			return nil, err
 		}
+		p := search.ToTextSearch(q, search.Pagination, query.PatternToFile)
 
 		ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 		defer cancel()

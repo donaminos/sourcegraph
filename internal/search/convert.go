@@ -66,15 +66,9 @@ const (
 	Pagination
 )
 
-type Intent int
-
-const (
-	Search Intent = iota
-	Suggestion
-)
-
 // Assumes actually Atomic query -> means we need to expand query.Basic to atomic, or assume atomic.
-func toTextSearch(q query.Basic, p Protocol, i Intent) *TextPatternInfo {
+func ToTextSearch(q query.Basic, p Protocol, transform query.BasicPass) *TextPatternInfo {
+	q = transform(q)
 	// Handle file: and -file: filters.
 	filesInclude, filesExclude := q.IncludeExcludeValues(query.FieldFile)
 	// Handle lang: and -lang: filters.
@@ -86,8 +80,6 @@ func toTextSearch(q query.Basic, p Protocol, i Intent) *TextPatternInfo {
 
 	isStructural := q.IsStructural()
 	count := count(q, p, isStructural)
-
-	// TODO  handle opts.fileMatchLimit and opts.forceFileSearch (for suggestions)
 
 	return &TextPatternInfo{
 		// Atomic Assumptions

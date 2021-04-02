@@ -23,6 +23,14 @@ func IsBasic(nodes []Node) bool {
 	return len(Dnf(nodes)) == 1
 }
 
+// IsPatternAtom returns whether a node is a pattern atom.
+func IsPatternAtom(b Basic) bool {
+	if p, ok := b.Pattern.(Pattern); ok && !p.Negated {
+		return true
+	}
+	return false
+}
+
 // exists traverses every node in nodes and returns early as soon as fn is satisfied.
 func exists(nodes []Node, fn func(node Node) bool) bool {
 	found := false
