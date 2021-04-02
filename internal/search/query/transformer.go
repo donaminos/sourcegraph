@@ -645,6 +645,17 @@ func FuzzifyRegexPatterns(nodes []Node) []Node {
 	})
 }
 
+// Transforms a search query such that `file:` is prefixed to the pattern. This
+// transformation is used for generating suggestions. Only applies if the
+// pattern expression is an atom.
+func PatternToFile(b Basic) Basic {
+	if p, ok := b.Pattern.(Pattern); ok && !p.Negated {
+		b.Parameters = append(b.Parameters, Parameter{Field: "file", Value: p.Value})
+		return b
+	}
+	return b
+}
+
 // concatRevFilters removes rev: filters from parameters and attaches their value as @rev to the repo: filters.
 // Invariant: Guaranteed to succeed on a validat Basic query.
 func ConcatRevFilters(b Basic) Basic {

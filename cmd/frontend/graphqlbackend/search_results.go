@@ -1318,7 +1318,9 @@ func getPatternInfo(q query.Q, opts *getPatternInfoOptions) (*search.TextPattern
 	filePatternsReposMustInclude, filePatternsReposMustExclude := q.RegexpPatterns(query.FieldRepoHasFile)
 
 	if opts.forceFileSearch {
+		log15.Info("evilness")
 		for _, v := range q.Values(query.FieldDefault) {
+			log15.Info("evilness", "append to include patterns", v.ToString())
 			includePatterns = append(includePatterns, v.ToString())
 		}
 	}

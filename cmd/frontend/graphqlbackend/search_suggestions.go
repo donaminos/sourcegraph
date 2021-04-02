@@ -270,6 +270,7 @@ func (r *searchResolver) Suggestions(ctx context.Context, args *searchSuggestion
 		if !hasOnlyEmptyRepoField && hasRepoOrFileFields && len(r.Query.Values(query.FieldDefault)) <= 1 {
 			ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 			defer cancel()
+			log15.Info("Got suggest file path condition true", "Q", r.Query.String())
 			return r.suggestFilePaths(ctx, maxSearchSuggestions)
 		}
 		return nil, nil

@@ -25,6 +25,8 @@ import (
 	"github.com/sourcegraph/sourcegraph/internal/trace"
 	"github.com/sourcegraph/sourcegraph/internal/vcs"
 	"github.com/sourcegraph/sourcegraph/schema"
+
+	"github.com/inconshreveable/log15"
 )
 
 // This file contains the root resolver for search. It currently has a lot of
@@ -438,10 +440,12 @@ func (r *searchResolver) resolveRepositories(ctx context.Context, effectiveRepoF
 func (r *searchResolver) suggestFilePaths(ctx context.Context, limit int) ([]SearchSuggestionResolver, error) {
 	resolved, err := r.resolveRepositories(ctx, nil)
 	if err != nil {
+		log15.Info("1. nope")
 		return nil, err
 	}
 
 	if resolved.OverLimit {
+		log15.Info("2. nope")
 		// If we've exceeded the repo limit, then we may miss files from repos we care
 		// about, so don't bother searching filenames at all.
 		return nil, nil
@@ -449,9 +453,11 @@ func (r *searchResolver) suggestFilePaths(ctx context.Context, limit int) ([]Sea
 
 	p, err := r.getPatternInfo(&getPatternInfoOptions{forceFileSearch: true})
 	if err != nil {
+		log15.Info("3. nope")
 		return nil, err
 	}
 
+	log15.Info("Got probably horribly wrong pattern info", "Q", r.Query.String())
 	args := search.TextParameters{
 		PatternInfo:     p,
 		RepoPromise:     (&search.Promise{}).Resolve(resolved.RepoRevs),
@@ -461,16 +467,19 @@ func (r *searchResolver) suggestFilePaths(ctx context.Context, limit int) ([]Sea
 		SearcherURLs:    r.searcherURLs,
 	}
 	if err := args.PatternInfo.Validate(); err != nil {
+		log15.Info("4. nope")
 		return nil, err
 	}
 
 	fileResults, _, err := searchFilesInReposBatch(ctx, r.db, &args)
 	if err != nil {
+		log15.Info("5. nope")
 		return nil, err
 	}
 
 	var suggestions []SearchSuggestionResolver
 	for i, result := range fileResults {
+		log15.Info("6. yep", "x", result.File().Path())
 		assumedScore := len(fileResults) - i // Greater score is first, so we inverse the index.
 		suggestions = append(suggestions, gitTreeSuggestionResolver{
 			gitTreeEntry: result.File(),
