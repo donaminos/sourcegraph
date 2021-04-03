@@ -16,7 +16,13 @@ import (
 
 func unionRegexp(values []string) string {
 	if len(values) == 0 {
-		return "" // Empty string implies nothing for exclude patterns, as opposed to () which means "match empty regex".
+		// Empty string implies nothing for exclude patterns, as opposed to () which
+		// means "match empty regex".
+		return ""
+	}
+	if len(values) == 1 {
+		// Cosmetic, so that I can diff effectively.
+		return values[0]
 	}
 	return "(" + strings.Join(values, ")|(") + ")"
 }
@@ -33,23 +39,24 @@ func langToFileRegexp(lang string) string {
 }
 
 func appendMap(values []string, f func(in string) string) []string {
+	var result []string
 	for _, v := range values {
-		values = append(values, f(v))
+		result = append(result, f(v))
 	}
-	return values
+	return result
 }
 
 const defaultMaxSearchResults = 30
 const defaultMaxSearchResultsStreaming = 500
 
 // Handle pagination count later
-func count(q query.Basic, p Protocol, isStructural bool) int {
+func count(q query.Basic, p Protocol) int {
 	if count := q.GetCount(); count != "" {
 		v, _ := strconv.Atoi(count) // Invariant: count is validated.
 		return v
 	}
 
-	if isStructural {
+	if q.IsStructural() {
 		return defaultMaxSearchResults
 	}
 
@@ -87,12 +94,20 @@ func ToTextSearch(q query.Basic, p Protocol, transform query.BasicPass) *TextPat
 	vv, _ := json.Marshal(filesInclude)
 	log15.Info("x", "1", string(vv))
 
-	isStructural := q.IsStructural()
-	count := count(q, p, isStructural)
+	count := count(q, p)
+
+	// Gross assumption: for literal searches, the IsRegexp member of
+	// TextPatternInfo must be true, and assumes that the literal value is a
+	// quoted regexp.
+	isRegexp := q.IsLiteral() || q.IsRegexp()
 
 	var pattern string
 	if p, ok := q.Pattern.(query.Pattern); ok {
-		pattern = p.Value
+		if q.IsLiteral() {
+			pattern = regexp.QuoteMeta(p.Value)
+		} else {
+			pattern = p.Value
+		}
 	}
 
 	negated := false
@@ -102,8 +117,8 @@ func ToTextSearch(q query.Basic, p Protocol, transform query.BasicPass) *TextPat
 
 	return &TextPatternInfo{
 		// Atomic Assumptions
-		IsRegExp:        q.IsRegexp(),
-		IsStructuralPat: isStructural,
+		IsRegExp:        isRegexp,
+		IsStructuralPat: q.IsStructural(),
 		IsCaseSensitive: q.IsCaseSensitive(),
 		FileMatchLimit:  int32(count),
 		Pattern:         pattern,
