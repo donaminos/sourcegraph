@@ -63,6 +63,7 @@ const viewsToReactGridLayouts = (views: ViewInsightProviderResult[]): ReactGridL
 interface InsightDescriptionProps {
     title: string
     icon: MdiReactIconComponentType
+    className?: string
 }
 
 // Since we use react-grid-layout for build draggable insight cards at insight dashboard
@@ -72,11 +73,11 @@ interface InsightDescriptionProps {
 const stopPropagation: React.MouseEventHandler<HTMLElement> = event => event.stopPropagation()
 
 const InsightDescription: React.FunctionComponent<InsightDescriptionProps> = props => {
-    const { icon: Icon, title } = props
+    const { icon: Icon, title, className = '' } = props
 
     return (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-        <small title={title} className="insight-description text-muted" onMouseDown={stopPropagation}>
+        <small title={title} className={`insight-description text-muted ${className}`} onMouseDown={stopPropagation}>
             <Icon className="icon-inline" /> {title}
         </small>
     )
@@ -133,12 +134,12 @@ export const InsightsViewGrid: React.FunctionComponent<InsightsViewGridProps> = 
                                     <div className="flex-grow-1 d-flex flex-column align-items-center justify-content-center">
                                         <LoadingSpinner /> Loading code insight
                                     </div>
-                                    <InsightDescription title={id} icon={getInsightViewIcon(source)} />
+                                    <InsightDescription className='view-grid__view-description' title={id} icon={getInsightViewIcon(source)} />
                                 </>
                             ) : isErrorLike(view) ? (
                                 <>
                                     <ErrorAlert className="m-0" error={view} />
-                                    <InsightDescription title={id} icon={getInsightViewIcon(source)} />
+                                    <InsightDescription className='view-grid__view-description' title={id} icon={getInsightViewIcon(source)} />
                                 </>
                             ) : (
                                 <>
