@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"path"
 	"regexp"
 	"sort"
@@ -1634,6 +1635,19 @@ func (r *searchResolver) doResults(ctx context.Context, forceResultTypes result.
 		requiredWg sync.WaitGroup
 		optionalWg sync.WaitGroup
 	)
+
+	pp, _ := json.Marshal(p)
+	qq, _ := json.Marshal(r.Query)
+	f, err := os.OpenFile("/tmp/expect.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString(r.rawQuery() + "\n" + string(qq) + "\n" + string(pp) + "\n" + resultTypes.String() + "\n"); err != nil {
+		panic(err)
+	}
 
 	waitGroup := func(required bool) *sync.WaitGroup {
 		if args.UseFullDeadline {
