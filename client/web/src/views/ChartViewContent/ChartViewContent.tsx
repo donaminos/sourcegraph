@@ -36,7 +36,7 @@ export const ChartViewContent: FunctionComponent<ChartViewContentProps> = props 
                     return
                 }
 
-                eventLogger.log('InsightDataPointClick', { insightType: otherProps.viewID.split('.')[0] })
+                // eventLogger.log('InsightDataPointClick', { insightType: otherProps.viewID.split('.')[0] })
                 linkHandler(event.originEvent, event.link)
             }
         }, [otherProps.history, otherProps.viewID])
