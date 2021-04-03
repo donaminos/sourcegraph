@@ -4,9 +4,8 @@
     }
 
     &__dropdown-menu {
-        min-width: 22rem;
-        max-width: 22rem;
-        padding: 1rem 1rem 0 1rem;
+        min-width: 20rem;
+        max-width: 20rem;
         user-select: text;
     }
     &__dropdown-menu-content {
@@ -14,22 +13,43 @@
         overflow-y: auto;
     }
     &__entry {
-        padding: 0.5rem 1rem;
+        padding: 1rem;
         word-wrap: break-word;
         white-space: pre-line;
         &-link {
             margin-bottom: 0;
         }
+        &-off-icon {
+            color: var(--border-color);
+        }
+        &-card {
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.75rem;
+            &--muted {
+                background-color: var(--color-bg-2);
+            }
+            &--active {
+                margin-left: 0.563rem;
+            }
+        }
+        &-sync {
+            margin-bottom: 0.75rem;
+        }
+        &-message {
+            padding: 0;
+            margin-bottom: 0.25rem;
+        }
+        &--border-error {
+            border-left: 2px solid $danger;
+        }
         &--border-success {
-            border-left: 6px solid $success;
+            border-left: 2px solid $success;
         }
-
         &--border-warning {
-            border-left: 6px solid $warning;
+            border-left: 2px solid $warning;
         }
-
         &--border-progress {
-            border-left: 6px solid $info;
+            border-left: 2px solid $info;
         }
     }
 }
